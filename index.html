@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.png">
 <title>Huzaifah | Software Developer & Tech Enthusiast</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,7 +22,7 @@ header{position:absolute;top:0;left:0;right:0;z-index:10;border-bottom:1px solid
 .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
 .logo{font-size:34px;font-weight:800;font-style:italic;letter-spacing:-3px}
 .logo span{color:var(--green)}
-nav ul{display:flex;gap:46px;list-style:none;font-size:15px;font-weight:500}
+nav ul{display:flex;gap:34px;list-style:none;font-size:15px;font-weight:500}
 nav a{padding:19px 0;display:inline-block;border-bottom:2px solid transparent}
 nav a.active,nav a:hover{color:var(--green);border-color:var(--green)}
 .btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;font-weight:600;font-size:15px;padding:12px 24px;transition:.2s}
@@ -141,6 +142,27 @@ nav a{padding:12px 0}
 .sk{min-width:96px}
 .sk.more{flex:1 1 0}
 }
+.ai-fab{position:fixed;right:18px;bottom:18px;z-index:50;background:var(--green);color:#04130b;font-weight:700;font-size:14px;border-radius:999px;padding:12px 18px;box-shadow:0 6px 20px rgba(0,0,0,.4);display:flex;gap:8px;align-items:center}
+.ai-fab:hover{background:#18d97a}
+@media(max-width:600px){
+.wrap{padding:0 16px}
+.hero{min-height:0;padding-bottom:36px}
+.hero-in{padding-top:36px}
+.hero h2{font-size:26px}
+.hero h1{font-size:40px}
+.hero h3{font-size:19px}
+.hero p{font-size:16px}
+.cta .btn{padding:11px 18px;font-size:14px}
+.title{font-size:26px}
+.sk,.sk.more{flex:1 1 calc(50% - 22px);min-width:0}
+.sp-row{grid-template-columns:1fr}
+.pc{flex-direction:row}
+.f{flex-direction:column;gap:12px;text-align:center}
+.cl li:first-child i{margin-left:0}
+.contact:after{display:none}
+.ai-fab span{display:none}
+.ai-fab{padding:14px}
+}
 </style>
 <!-- GOOGLE ADSENSE: after approval, remove the comment markers and put your own publisher ID
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -158,6 +180,7 @@ nav a{padding:12px 0}
 <li><a href="skills.html">Skills</a></li>
 <li><a href="#projects">Projects</a></li>
 <li><a href="#resume">Resume</a></li>
+<li><a href="tutor.html">AI Tutor</a></li>
 <li><a href="#contact">Contact</a></li>
 </ul>
 </nav>
@@ -289,5 +312,6 @@ Ad space 2
 </div>
 </footer>
 
+<a href="tutor.html" class="ai-fab" aria-label="Ask the AI tutor"><i class="fa-solid fa-robot"></i><span>AI Tutor</span></a>
 </body>
 </html>

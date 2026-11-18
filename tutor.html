@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Tutor | Huzaifah</title>
+<link rel="icon" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--bg:#070d12;--panel:#0d1519;--card:#111b20;--line:#1c2a2f;--green:#10c46a;--muted:#c4ccd0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:#fff;line-height:1.6;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.g{color:var(--green)}
+header{border-bottom:1px solid var(--line);background:var(--panel)}
+.nav{max-width:1100px;margin:0 auto;padding:0 24px;min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{font-size:30px;font-weight:800;font-style:italic;letter-spacing:-3px}
+.logo span{color:var(--green)}
+nav{display:flex;gap:28px;font-weight:500;font-size:15px;flex-wrap:wrap}
+nav a{padding:6px 0;border-bottom:2px solid transparent}
+nav a:hover,nav a.on{color:var(--green);border-color:var(--green)}
+main{max-width:860px;margin:0 auto;padding:40px 24px 56px}
+h1{font-size:40px;font-weight:800;letter-spacing:-1px}
+.bar{width:60px;height:4px;background:var(--green);border-radius:2px;margin:12px 0 16px}
+.lead{color:var(--muted);margin-bottom:18px}
+.mode{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 12px;color:var(--muted);margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.chip{background:var(--card);border:1px solid var(--line);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer;transition:.2s}
+.chip:hover{border-color:var(--green);color:var(--green)}
+.chat{background:var(--panel);border:1px solid var(--line);border-radius:16px;height:min(56vh,520px);overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:12px 16px;border-radius:14px;font-size:15px;word-wrap:break-word}
+.msg p{white-space:pre-wrap}
+.msg.bot{background:var(--card);border:1px solid var(--line);align-self:flex-start}
+.msg.me{background:var(--green);color:#04130b;align-self:flex-end;font-weight:500}
+.msg pre{background:#050a0e;border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0;overflow-x:auto;font-size:13px;color:#d7f7e6}
+.msg pre code{font-family:ui-monospace,Consolas,monospace}
+.row{display:flex;gap:10px;margin-top:14px}
+.row input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:14px 20px;color:#fff;font:inherit;font-size:15px}
+.row input:focus{outline:2px solid var(--green);border-color:transparent}
+.send{background:var(--green);color:#04130b;border:0;border-radius:999px;padding:0 24px;font-weight:700;font-size:15px;cursor:pointer;transition:.2s}
+.send:hover{background:#18d97a}
+.send:disabled{opacity:.5;cursor:default}
+footer{border-top:1px solid var(--line);background:var(--panel);text-align:center;padding:16px;font-size:14px;color:var(--muted)}
+@media(max-width:600px){
+main{padding:28px 16px 40px}
+h1{font-size:32px}
+.nav{padding:10px 16px}
+nav{gap:16px;font-size:14px}
+.msg{max-width:96%}
+.send{padding:0 18px}
+}
+</style>
+</head>
+<body>
+<header><div class="nav"><a href="index.html" class="logo">H<span>Z</span></a>
+<nav><a href="index.html">Home</a><a href="about.html">About</a><a href="skills.html">Skills</a><a href="hire-me.html">Hire Me</a><a href="tutor.html" class="on">AI Tutor</a></nav></div></header>
+
+<main>
+<h1>AI <span class="g">Tutor</span></h1>
+<div class="bar"></div>
+<p class="lead">Ask me anything about web development and programming. Pick a topic or type your own question.</p>
+<span class="mode" id="mode"></span>
+
+<div class="chips" id="chips">
+<button class="chip" data-q="Explain HTML">HTML</button>
+<button class="chip" data-q="Explain CSS">CSS</button>
+<button class="chip" data-q="Explain JavaScript">JavaScript</button>
+<button class="chip" data-q="Explain Python">Python</button>
+<button class="chip" data-q="Explain React">React</button>
+<button class="chip" data-q="Explain Git and GitHub">Git & GitHub</button>
+<button class="chip" data-q="How do I make a website responsive?">Responsive design</button>
+</div>
+
+<div class="chat" id="chat" aria-live="polite"></div>
+
+<div class="row">
+<input id="q" type="text" placeholder="Type your question here…" autocomplete="off" aria-label="Your question">
+<button class="send" id="send">Ask</button>
+</div>
+</main>
+<footer>© 2025 Huzaifah. All rights reserved.</footer>
+
+<script>
+/* To use a real AI, paste your Cloudflare Worker link between the quotes (see worker.js).
+   Leave it empty to use the built-in tutor. */
+var TUTOR_API_URL = "";
+
+var KB = [
+{keys:["html","tag","tags","webpage"], text:`HTML is the structure of a web page. You write content inside tags.
+
+~~~
+<h1>Hello</h1>
+<p>My first page</p>
+<a href="https://example.com">A link</a>
+<img src="photo.jpg" alt="A photo">
+~~~
+Every site needs a main file named index.html. Next, learn CSS to style it.`},
+{keys:["css","style","styles","color","colors"], text:`CSS controls how HTML looks: colors, spacing, fonts and layout.
+
+~~~
+h1 {
+  color: green;
+  font-size: 32px;
+}
+.card {
+  padding: 16px;
+  border-radius: 12px;
+}
+~~~
+The part before { } is the selector that picks elements. The rules inside style them.`},
+{keys:["flexbox","flex","grid","layout"], text:`Flexbox lines items up in a row or column. Grid makes two-dimensional layouts.
+
+~~~
+.row {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+~~~`},
+{keys:["responsive","mobile","media","screen","phone"], text:`A responsive site adapts to phones, tablets and desktops. Three basics:
+
+1. Add this in the head of your page:
+~~~
+<meta name="viewport" content="width=device-width, initial-scale=1">
+~~~
+2. Use flexible sizes like %, rem and max-width instead of fixed pixels.
+3. Use media queries to change the layout on small screens:
+~~~
+@media (max-width: 600px) {
+  .cards { grid-template-columns: 1fr; }
+}
+~~~`},
+{keys:["javascript","js","dom"], text:`JavaScript makes pages interactive. It can react to clicks, change content and talk to servers.
+
+~~~
+const button = document.querySelector("button");
+button.addEventListener("click", function () {
+  alert("You clicked me!");
+});
+~~~
+Next, learn variables, functions, arrays and loops.`},
+{keys:["variable","variables","let","const"], text:`A variable stores a value so you can use it later.
+
+~~~
+const name = "Huzaifah";   // cannot be reassigned
+let score = 0;             // can change
+score = score + 1;
+console.log(name, score);
+~~~
+Use const by default and let only when the value must change.`},
+{keys:["function","functions"], text:`A function is a reusable block of code.
+
+~~~
+function greet(name) {
+  return "Hello, " + name + "!";
+}
+console.log(greet("Amina"));
+~~~
+You define it once and call it as many times as you want.`},
+{keys:["loop","loops","array","arrays"], text:`An array holds a list of values, and a loop repeats code for each one.
+
+~~~
+const skills = ["HTML", "CSS", "JavaScript"];
+for (const skill of skills) {
+  console.log(skill);
+}
+~~~`},
+{keys:["python"], text:`Python is a readable language used for web backends, data and automation.
+
+~~~
+name = "Huzaifah"
+skills = ["HTML", "CSS", "Python"]
+for s in skills:
+    print(name, "knows", s)
+
+def add(a, b):
+    return a + b
+~~~
+Indentation matters in Python: it shows which lines belong together.`},
+{keys:["react","component","components","jsx"], text:`React builds interfaces from small reusable pieces called components.
+
+~~~
+function Welcome({ name }) {
+  return <h1>Hello, {name}</h1>;
+}
+~~~
+Components take inputs (props) and can keep changing data in state with useState. Learn solid JavaScript first, then React.`},
+{keys:["git","github","commit","repository","repo"], text:`Git tracks changes to your code, and GitHub stores it online.
+
+~~~
+git init
+git add .
+git commit -m "My first commit"
+git push
+~~~
+A commit is a saved snapshot. You can also upload files straight in the GitHub website with Add file → Upload files.`},
+{keys:["pages","deploy","host","hosting","publish"], text:`To host a static site free on GitHub Pages: put your files (with index.html) in a public repo, open Settings → Pages, choose Deploy from a branch, pick main and / (root), then Save. Your link appears in a few minutes.`},
+{keys:["api","fetch","json"], text:`An API lets your page get data from a server. fetch() requests it and JSON is the usual format.
+
+~~~
+fetch("https://api.example.com/data")
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+~~~`},
+{keys:["sql","database","databases","table"], text:`A database stores data in tables. SQL is the language to read and change it.
+
+~~~
+SELECT name, email FROM users WHERE age > 18;
+INSERT INTO users (name, email) VALUES ('Amina', 'a@mail.com');
+~~~`},
+{keys:["debug","debugging","error","bug","errors"], text:`Debugging tips:
+1. Read the error message. It says what and where.
+2. Open the browser console (press F12) to see errors.
+3. Use console.log() to check values.
+4. Change one thing at a time and test.
+5. Check spelling and capital letters: file names are case-sensitive.`},
+{keys:["hello","hi","hey"], text:`Hello! I’m your coding tutor. Ask about HTML, CSS, JavaScript, Python, React, Git, APIs, databases or debugging.`}
+];
+
+var FALLBACK = "I don’t have a lesson on that in my built-in notes yet. Try asking about HTML, CSS, JavaScript, Python, React, Git, responsive design, APIs, databases or debugging. For answers to any question, connect a real AI (see worker.js).";
+
+var chat = document.getElementById("chat");
+var input = document.getElementById("q");
+var sendBtn = document.getElementById("send");
+var convo = [];
+
+document.getElementById("mode").textContent = TUTOR_API_URL ? "Mode: AI tutor" : "Mode: built-in tutor";
+
+function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+function localAnswer(q){
+  q = q.toLowerCase();
+  var best = null, score = 0;
+  KB.forEach(function(e){
+    var s = 0;
+    e.keys.forEach(function(k){
+      if (new RegExp("\\b" + esc(k) + "\\b").test(q)) s += k.length;
+    });
+    if (s > score){ score = s; best = e; }
+  });
+  return best ? best.text : FALLBACK;
+}
+
+function addMsg(role, text){
+  var div = document.createElement("div");
+  div.className = "msg " + (role === "me" ? "me" : "bot");
+  var parts = text.split("~~~");
+  parts.forEach(function(part, i){
+    if (i % 2 === 1){
+      var pre = document.createElement("pre");
+      var code = document.createElement("code");
+      code.textContent = part.replace(/^\n+|\n+$/g, "");
+      pre.appendChild(code);
+      div.appendChild(pre);
+    } else if (part.trim()){
+      var p = document.createElement("p");
+      p.textContent = part.trim();
+      div.appendChild(p);
+    }
+  });
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+async function ask(question){
+  question = question.trim();
+  if (!question) return;
+  addMsg("me", question);
+  input.value = "";
+  sendBtn.disabled = true;
+  var thinking = addMsg("bot", "Thinking…");
+  var reply;
+  convo.push({role:"user", content:question});
+  try {
+    if (TUTOR_API_URL){
+      var res = await fetch(TUTOR_API_URL, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({messages:convo})
+      });
+      var data = await res.json();
+      reply = data.reply || "Sorry, I couldn’t get an answer. Please try again.";
+    } else {
+      await new Promise(function(r){ setTimeout(r, 400); });
+      reply = localAnswer(question);
+    }
+  } catch (e) {
+    reply = "Sorry, something went wrong connecting to the tutor. " + localAnswer(question);
+  }
+  convo.push({role:"assistant", content:reply});
+  thinking.remove();
+  addMsg("bot", reply);
+  sendBtn.disabled = false;
+  input.focus();
+}
+
+sendBtn.addEventListener("click", function(){ ask(input.value); });
+input.addEventListener("keydown", function(e){ if (e.key === "Enter") ask(input.value); });
+document.getElementById("chips").addEventListener("click", function(e){
+  var b = e.target.closest(".chip");
+  if (b) ask(b.getAttribute("data-q"));
+});
+
+addMsg("bot", "Hi, I’m your AI tutor. Tap a topic above or type a question, for example: “What is a function?”");
+</script>
+</body>
+</html>
